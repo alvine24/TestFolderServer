@@ -43,6 +43,7 @@ void TestFolderSetServer::uploadFile(){
     if(file->open(QIODevice::ReadOnly)){
         QString myFilename = file->fileName().section('/', -1);
         QByteArray massive = file->readAll();
+        qDebug() << "Size of data: " << massive.size();
         link->Upload(myFilename, massive);
         link->connect( link, SIGNAL(done()), this, SLOT(uploadDone()));
         ui->uploadPushButton->setEnabled(false);
@@ -55,32 +56,13 @@ void TestFolderSetServer::uploadFile(){
 
 void TestFolderSetServer::downloadFile(){
     if(link == NULL){
-        link = new SheerCloudLink(ui->hostLineEdit->text(), ui->userLineEdit->text(), ui->passwordLineEdit->text());
+        link = new SheerCloudLink(ui->hostLineEdit->text(), ui->userLineEdit->text(), ui->passwordLineEdit->text());//http://172.245.20.58:8080/
     }
 
-    QByteArray result;
     link->Download(ui->fileLineEdit->text(), result);
     link->connect(link, SIGNAL(done()), this, SLOT(downloadDone()));
     ui->downloadPushButton->setEnabled(false);
-
-    //save result into temp folder
-    QString myTempPath = QDir::homePath()+"/Cairnsmith/server"; //here we set the folder in which server's files will be saved
-    QString sFilepath = ui->fileLineEdit->text();
-    QFile myFile(myTempPath+'/'+sFilepath);
-    qDebug() << "le chemin : " << myTempPath+'/'+sFilepath;
-    if(!myFile.open(QIODevice::WriteOnly)){
-        qDebug() << "Failed to open : " << myFile.fileName();
-        QMessageBox msgBox;
-        msgBox.setText("The file is not saved.");//.arg(myFile.fileName()));
-        msgBox.exec();
-    }else {
-        myFile.write(result.data());
-        myFile.close();
-        qDebug() << "The file is downloaded : " << myFile.fileName();
-        QMessageBox msgBox;
-        msgBox.setText("The file %1 is saved.");//.arg(myFile.fileName()));
-        msgBox.exec();
-    }
+    qDebug() << "File Download size: "<< result.size();
 }
 
 void TestFolderSetServer::uploadDone(){
@@ -91,8 +73,21 @@ void TestFolderSetServer::uploadDone(){
 }
 
 void TestFolderSetServer::downloadDone(){
-    QMessageBox msgBox;
-    msgBox.setText("The document is downloaded.");
-    msgBox.exec();
-    ui->downloadPushButton->setEnabled(true);
+
+    //save result into temp folder
+    QString myTempPath = QDir::homePath()+"/Cairnsmith/server"; //here we set the folder in which server's files will be saved
+    QString sFilepath = ui->fileLineEdit->text();
+    QFile myFile(myTempPath+'/'+sFilepath);
+    qDebug() << "le chemin : " << myTempPath+'/'+sFilepath;
+    if(!myFile.open(QIODevice::WriteOnly)){
+        qDebug() << "Failed to open : " << myFile.fileName();
+    }else {
+        myFile.write(result.data());
+        myFile.close();
+        QMessageBox msgBox;
+        msgBox.setText("The document is downloaded.");
+        msgBox.exec();
+        ui->downloadPushButton->setEnabled(true);
+        qDebug() << "The file is downloaded : " << myFile.fileName();
+    }
 }
