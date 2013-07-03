@@ -11,7 +11,10 @@ TestListFolderServer::TestListFolderServer(QWidget *parent) :
 
     link = NULL;
     taille = 0;
-    result = 0;
+    resultList.clear();
+    resultFile.clear();
+    spathResFile.clear();
+    spathResList.clear();
 }
 
 TestListFolderServer::~TestListFolderServer()
@@ -28,21 +31,62 @@ void TestListFolderServer::on_treeView_clicked(const QModelIndex &index){
 }
 
 void TestListFolderServer::clickMaterial(){
+    qDebug()<<"TestListFolderServer::clickMaterial";
     if(link == NULL){
-        link = new SheerCloudLink("http://localhost:8080", "abc", "123");//http://172.245.20.58:8080
+        link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
     }
-    result = 0;
 
-    QString spath = "CSLibrairies/"+ui->materialsPushButton->text();
-    link->List(spath, result);
+    spathResList.clear();
+    resultList.clear();
+    spathResList = "CSLibrairies/"+ui->materialsPushButton->text();
+    link->List(spathResList, resultList);
 
-    link->connect(link, SIGNAL(done()), this, SLOT(listDownloadMaterial()));
+    link->connect(link, SIGNAL(done()), this, SLOT(listDownload()));
+    iDownloadwhat = 1;
 }
 
 
-void TestListFolderServer::materialDone(){
+void TestListFolderServer::listDownload(){
 
-    //QString sPath = QDir::homePath()+"/Cairnsmith/server/CSLibrairies";
+    link->deleteLater();
+    link = NULL;
+
+    ui->materialsPushButton->setEnabled(false);
+    ui->modelsPushButton->setEnabled(false);
+
+    list.clear();
+    QString myResult = resultList.data();
+    QStringList myListResult = myResult.split("\n");
+    qDebug() << "My List: "<< myListResult;
+    foreach(QString s, myListResult){
+        if(s.contains('/')){
+            list.append(s);
+        }
+    }
+    //get file from the first
+    if (!list.empty()) {
+        QString s = list.at(0);
+        list.pop_front();
+        getListFileServer(s);
+    }
+}
+
+
+void TestListFolderServer::getListFileServer(QString spath){
+    if(link == NULL){
+        link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
+    }
+
+    //QByteArray res;
+    spathResFile.clear();
+    resultFile.clear();
+    spathResFile = spath;
+
+    link->Download(spath, resultFile);
+    link->connect(link, SIGNAL(done()), this, SLOT(downloadDone()));
+}
+
+void TestListFolderServer::materialDone(){
 
     dirModel = new QFileSystemModel(this);
     dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
@@ -61,81 +105,47 @@ void TestListFolderServer::materialDone(){
     ui->modelsPushButton->setEnabled(true);
 }
 
-void TestListFolderServer::listDownloadMaterial(){
-    ui->materialsPushButton->setEnabled(false);
-    ui->modelsPushButton->setEnabled(false);
-
-    QString myResult = result.data();
-    QStringList list = myResult.split("\n");
-    foreach(QString s, list){
-        if(s.contains('/')){
-            qDebug() << "Ici on a : " << s;
-            getListFileServer(s);
-            taille+=1;
-        }
-    }
-    materialDone();
-}
-
 void TestListFolderServer::downloadDone(){
-    /*QMessageBox msgBox;
-    msgBox.setText("The document is downloaded.");
-    msgBox.exec();*/
-}
+    link->deleteLater();
+    link = NULL;
 
-void TestListFolderServer::getListFileServer(QString spath){
-    if(link == NULL){
-        link = new SheerCloudLink("http://localhost:8080", "abc", "123");//http://172.245.20.58:8080
-    }
-    QByteArray resultat;
-    link->Download(spath, resultat);
-    link->connect(link, SIGNAL(done()), this, SLOT(downloadDone()));
-
-    //save result into temp folder
-    QString myTempPath = QDir::homePath()+"/Cairnsmith/server"; //here we set the folder in which server's files will be saved
-    QFile myFile(myTempPath+'/'+spath);
-    qDebug() << "le chemin : " << myTempPath+'/'+spath;
+    QFile myFile(myTempPath+'/'+spathResFile);
     if(!myFile.open(QIODevice::WriteOnly)){
         qDebug() << "Failed to open : " << myFile.fileName();
     }else {
-        myFile.write(resultat.data());
+        myFile.write(resultFile.data());
         myFile.close();
+    }
+    if (list.empty()) {
+        if(iDownloadwhat == 1)
+            materialDone();
+        else if (iDownloadwhat == 2)
+            modelDone();
+    }
+    else {
+        QString s = list.at(0);
+        list.pop_front();
+        getListFileServer(s);
     }
 }
 
 
 void TestListFolderServer::clickModel(){
     if(link == NULL){
-        link = new SheerCloudLink("http://localhost:8080", "abc", "123");//http://172.245.20.58:8080
+        link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
     }
-    result =0;
-    QString spath = "CSLibrairies/"+ui->modelsPushButton->text();
+    resultList.clear();
+    spathResList.clear();
+    spathResList = "CSLibrairies/"+ui->modelsPushButton->text();
 
-    link->List(spath, result);
+    link->List(spathResList, resultList);
 
-    link->connect(link, SIGNAL(done()), this, SLOT(listDownloadModel()));
+    link->connect(link, SIGNAL(done()), this, SLOT(listDownload()));
+    iDownloadwhat = 2;
 }
 
-
-void TestListFolderServer::listDownloadModel(){
-    ui->materialsPushButton->setEnabled(false);
-    ui->modelsPushButton->setEnabled(false);
-
-    QString myResult = result.data();
-    QStringList list = myResult.split("\n");
-    foreach(QString s, list){
-        if(s.contains('/')){
-            qDebug() << "Ici on a : " << s;
-            getListFileServer(s);
-            taille+=1;
-        }
-    }
-    modelDone();
-}
 
 void TestListFolderServer::modelDone(){
-    //QString sPath = QDir::homePath()+"/Cairnsmith/server/CSLibrairies";
-    qDebug() << "My current Path is :" << sPathServer;
 
     dirModel = new QFileSystemModel(this);
     dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);

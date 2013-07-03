@@ -13,6 +13,7 @@
 
 const QString sPathServer = QDir::homePath()+"/Cairnsmith/server/CSLibrairies";
 const QString sPathLocal = QDir::homePath()+"/Cairnsmith/abc/CSLibrairies";
+const QString myTempPath = QDir::homePath()+"/Cairnsmith/server";
 
 namespace Ui {
 class TestListFolderServer;
@@ -33,8 +34,7 @@ public slots:
     void on_treeView_clicked(const QModelIndex &index);
     void clickModel();
     void clickMaterial();
-    void listDownloadMaterial();
-    void listDownloadModel();
+    void listDownload();
     void downloadDone();
 
 
@@ -50,13 +50,17 @@ private:
     void materialDone();
     void modelDone();
     int taille;
-    QByteArray result;
+    QByteArray resultList;
+    QByteArray resultFile;
+    QString spathResList;
+    QString spathResFile;
     FileHash m_oHashMD5;
     QHash<QString, QString> mylistServer;
     QHash<QString, QString> mylistLocal;
     QHash<QString, QString> listFiles(QString mDir);
     QList<QString> compareFileList(QHash<QString, QString> local, QHash<QString, QString> remote);
-
+    QStringList list;
+    int iDownloadwhat;      //1-> Material, 2-> Model
 };
 
 #endif // TESTLISTFOLDERSERVER_H
