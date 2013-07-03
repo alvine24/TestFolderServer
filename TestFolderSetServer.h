@@ -30,7 +30,7 @@ public slots:
 private:
     Ui::TestFolderSetServer *ui;
     SheerCloudLink *link;
-    QByteArray result;
+    QByteArray resultFile;
 };
 
 #endif // TESTFOLDERSETSERVER_H

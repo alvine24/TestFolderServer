@@ -19,6 +19,7 @@ TestFolderSetServer::TestFolderSetServer(QWidget *parent) :
     ui->lineEdit->setText("123");
     ui->userLineEdit->setText("abc");*/
     link = NULL;
+    resultFile.clear();
 }
 
 TestFolderSetServer::~TestFolderSetServer()
@@ -59,10 +60,8 @@ void TestFolderSetServer::downloadFile(){
         link = new SheerCloudLink(ui->hostLineEdit->text(), ui->userLineEdit->text(), ui->passwordLineEdit->text());//http://172.245.20.58:8080/
     }
 
-    link->Download(ui->fileLineEdit->text(), result);
+    link->Download(ui->fileLineEdit->text(), resultFile);
     link->connect(link, SIGNAL(done()), this, SLOT(downloadDone()));
-    ui->downloadPushButton->setEnabled(false);
-    qDebug() << "File Download size: "<< result.size();
 }
 
 void TestFolderSetServer::uploadDone(){
@@ -75,14 +74,14 @@ void TestFolderSetServer::uploadDone(){
 void TestFolderSetServer::downloadDone(){
 
     //save result into temp folder
+    ui->downloadPushButton->setEnabled(false);
     QString myTempPath = QDir::homePath()+"/Cairnsmith/server"; //here we set the folder in which server's files will be saved
     QString sFilepath = ui->fileLineEdit->text();
     QFile myFile(myTempPath+'/'+sFilepath);
-    qDebug() << "le chemin : " << myTempPath+'/'+sFilepath;
     if(!myFile.open(QIODevice::WriteOnly)){
         qDebug() << "Failed to open : " << myFile.fileName();
     }else {
-        myFile.write(result.data());
+        myFile.write(resultFile.data(), resultFile.size());
         myFile.close();
         QMessageBox msgBox;
         msgBox.setText("The document is downloaded.");

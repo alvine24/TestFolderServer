@@ -31,9 +31,10 @@ void TestListFolderServer::on_treeView_clicked(const QModelIndex &index){
 }
 
 void TestListFolderServer::clickMaterial(){
-    qDebug()<<"TestListFolderServer::clickMaterial";
     if(link == NULL){
-        link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
+        QString user = "abc";
+        QString pass = "123";
+        link = new SheerCloudLink("http://localhost:8080", user, pass);//http://172.245.20.58:8080
     }
 
     spathResList.clear();
@@ -47,7 +48,7 @@ void TestListFolderServer::clickMaterial(){
 
 
 void TestListFolderServer::listDownload(){
-
+    qDebug()<< "TestListFolderServer::listDownload";
     link->deleteLater();
     link = NULL;
 
@@ -57,7 +58,6 @@ void TestListFolderServer::listDownload(){
     list.clear();
     QString myResult = resultList.data();
     QStringList myListResult = myResult.split("\n");
-    qDebug() << "My List: "<< myListResult;
     foreach(QString s, myListResult){
         if(s.contains('/')){
             list.append(s);
@@ -73,8 +73,9 @@ void TestListFolderServer::listDownload(){
 
 
 void TestListFolderServer::getListFileServer(QString spath){
+    qDebug() << "TestListFolderServer::getListFileServer";
     if(link == NULL){
-        link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
+        link = new SheerCloudLink("http://localhost:8080", "abc", "123");//http://172.245.20.58:8080
     }
 
     //QByteArray res;
@@ -108,12 +109,13 @@ void TestListFolderServer::materialDone(){
 void TestListFolderServer::downloadDone(){
     link->deleteLater();
     link = NULL;
+    qDebug() << "TestListFolderServer::downloadDone";
 
     QFile myFile(myTempPath+'/'+spathResFile);
     if(!myFile.open(QIODevice::WriteOnly)){
         qDebug() << "Failed to open : " << myFile.fileName();
     }else {
-        myFile.write(resultFile.data());
+        myFile.write(resultFile.data(), resultFile.size());
         myFile.close();
     }
     if (list.empty()) {
@@ -132,7 +134,7 @@ void TestListFolderServer::downloadDone(){
 
 void TestListFolderServer::clickModel(){
     if(link == NULL){
-        link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
+        link = new SheerCloudLink("http://localhost:8080", "abc", "123");//http://172.245.20.58:8080
     }
     resultList.clear();
     spathResList.clear();

@@ -32,7 +32,7 @@ void TestFolderServer::activateUpload(){
 
 void TestFolderServer::uploadFile(){
     if(link == NULL){
-        link = new SheerCloudLink("http://localhost:8080", ui->userLineEdit->text(), ui->lineEdit->text());
+        link = new SheerCloudLink("http://172.245.20.58:8080", ui->userLineEdit->text(), ui->lineEdit->text());
     }
 
     QFile *file = new QFile(ui->fileLineEdit->text());
