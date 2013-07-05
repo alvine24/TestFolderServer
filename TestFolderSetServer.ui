@@ -41,6 +41,20 @@
      <item>
       <widget class="QLineEdit" name="hostLineEdit"/>
      </item>
+     <item>
+      <widget class="QLabel" name="serverPathLabel">
+       <property name="text">
+        <string>Fill the Server Path</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="folderPathLineEdit">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>

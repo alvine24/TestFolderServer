@@ -42,7 +42,12 @@ void TestFolderSetServer::uploadFile(){
 
     QFile *file = new QFile(ui->fileLineEdit->text());
     if(file->open(QIODevice::ReadOnly)){
-        QString myFilename = file->fileName().section('/', -1);
+        QString myFilename;// = file->fileName().section('/', -1);
+        if(!ui->folderPathLineEdit->text().isEmpty())
+            myFilename = ui->folderPathLineEdit->text();
+        else
+            myFilename = file->fileName().section('/', -1);
+
         QByteArray massive = file->readAll();
         qDebug() << "Size of data: " << massive.size();
         link->Upload(myFilename, massive);
