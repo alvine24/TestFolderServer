@@ -30,7 +30,7 @@ public slots:
     void askRender();
     void uploadDone();
     void renderDone();
-    void progressDone();
+    //void progressDone();
 
 private:
     Ui::TestRenderServer *ui;

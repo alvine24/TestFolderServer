@@ -96,7 +96,7 @@ void TestRenderServer::askRender(){
 
     if(link == NULL){
         link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
-        link->connect(link, SIGNAL(done()), this, SLOT(progressDone()));
+        //link->connect(link, SIGNAL(done()), this, SLOT(progressDone()));
     }
 
     QString scene = ui->sceneLineEdit->text();
@@ -109,12 +109,19 @@ void TestRenderServer::renderDone(){
         link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
         //link->connect(link, SIGNAL(done()), this, SLOT(progressDone()));
     }
-    if(!resultRender)
-    link->Progress(rendering, resultRender);
-    //link->connect(link, SIGNAL(done()), this, SLOT(progressDone()));
+    if(!resultRender){
+        link->Progress(rendering, resultRender);
+        //link->connect(link, SIGNAL(done()), this, SLOT(progressDone()));
+        qDebug() << "Progressing : "<< resultRender;
+    }else{
+        qDebug() << "It is done : "<< resultRender;
+        qDebug() << "The result of Rendering :" << rendering;
+        ui->uploadFolderPushButton->setEnabled(true);
+        ui->renderPushButton->setEnabled(true);
+    }
 }
 
-void TestRenderServer::progressDone(){
+/*void TestRenderServer::progressDone(){
     if(resultRender){
         qDebug() << "It is done : "<< resultRender;
         qDebug() << "The result of Rendering :" << rendering;
@@ -128,4 +135,4 @@ void TestRenderServer::progressDone(){
         qDebug() << "Progressing : "<< resultRender;
         renderDone();
     }
-}
+}*/
