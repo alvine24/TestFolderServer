@@ -173,7 +173,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <property name="spacing">
-      <number>20</number>
+      <number>10</number>
      </property>
      <property name="leftMargin">
       <number>10</number>
@@ -204,6 +204,13 @@
        </property>
        <property name="text">
         <string>DownLoad</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QProgressBar" name="progressBar">
+       <property name="value">
+        <number>0</number>
        </property>
       </widget>
      </item>

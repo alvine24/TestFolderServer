@@ -20,6 +20,7 @@ TestFolderSetServer::TestFolderSetServer(QWidget *parent) :
     ui->userLineEdit->setText("abc");*/
     link = NULL;
     resultFile.clear();
+    ui->progressBar->setValue(0);
 }
 
 TestFolderSetServer::~TestFolderSetServer()
@@ -39,6 +40,8 @@ void TestFolderSetServer::uploadFile(){
     if(link == NULL){
         link = new SheerCloudLink(ui->hostLineEdit->text(), ui->userLineEdit->text(), ui->passwordLineEdit->text());
     }
+    ui->uploadPushButton->setEnabled(false);
+    ui->downloadPushButton->setEnabled(false);
 
     QFile *file = new QFile(ui->fileLineEdit->text());
     if(file->open(QIODevice::ReadOnly)){
@@ -49,14 +52,16 @@ void TestFolderSetServer::uploadFile(){
             myFilename = file->fileName().section('/', -1);
 
         QByteArray massive = file->readAll();
-        qDebug() << "Size of data: " << massive.size();
+        qDebug() << "Size of data: " << massive.size() << myFilename;
         link->Upload(myFilename, massive);
         link->connect( link, SIGNAL(done()), this, SLOT(uploadDone()));
-        ui->uploadPushButton->setEnabled(false);
+        link->connect(link, SIGNAL(progress(qint64,qint64)), this, SLOT(progressUploadBar(qint64,qint64)));
     }else{
         QMessageBox msgBox;
         msgBox.setText("The document is not sent.");
         msgBox.exec();
+        ui->uploadPushButton->setEnabled(true);
+        ui->downloadPushButton->setEnabled(true);
     }
 }
 
@@ -64,34 +69,55 @@ void TestFolderSetServer::downloadFile(){
     if(link == NULL){
         link = new SheerCloudLink(ui->hostLineEdit->text(), ui->userLineEdit->text(), ui->passwordLineEdit->text());//http://172.245.20.58:8080/
     }
-
+    ui->uploadPushButton->setEnabled(false);
+    ui->downloadPushButton->setEnabled(false);
     link->Download(ui->fileLineEdit->text(), resultFile);
+    link->connect(link, SIGNAL(progressDownload(qint64, qint64)), this, SLOT(progressDownloadBar(qint64, qint64)));
     link->connect(link, SIGNAL(done()), this, SLOT(downloadDone()));
 }
 
 void TestFolderSetServer::uploadDone(){
+    link->deleteLater();
+    link = NULL;
     QMessageBox msgBox;
     msgBox.setText("The document is uploaded.");
     msgBox.exec();
     ui->uploadPushButton->setEnabled(true);
+    ui->downloadPushButton->setEnabled(true);
+    ui->progressBar->setValue(0);
 }
 
 void TestFolderSetServer::downloadDone(){
-
+    link->deleteLater();
+    link = NULL;
     //save result into temp folder
-    ui->downloadPushButton->setEnabled(false);
     QString myTempPath = QDir::homePath()+"/Cairnsmith/server"; //here we set the folder in which server's files will be saved
     QString sFilepath = ui->fileLineEdit->text();
     QFile myFile(myTempPath+'/'+sFilepath);
     if(!myFile.open(QIODevice::WriteOnly)){
         qDebug() << "Failed to open : " << myFile.fileName();
     }else {
+        qDebug() << "Data From Server"<< resultFile.size();
         myFile.write(resultFile.data(), resultFile.size());
         myFile.close();
         QMessageBox msgBox;
         msgBox.setText("The document is downloaded.");
         msgBox.exec();
         ui->downloadPushButton->setEnabled(true);
+        ui->uploadPushButton->setEnabled(true);
+        ui->progressBar->setValue(0);
         qDebug() << "The file is downloaded : " << myFile.fileName();
     }
+}
+
+void TestFolderSetServer::progressUploadBar(qint64 bytesSent, qint64 bytesTotal){
+    qDebug() << "Bytes Sent :" << bytesSent;
+    ui->progressBar->setMaximum(bytesTotal);
+    ui->progressBar->setValue(bytesSent);
+}
+
+
+void TestFolderSetServer::progressDownloadBar(qint64 bytesReceived, qint64 bytesTotal){
+    ui->progressBar->setMaximum(23467684);// here must be set the size of the file that is downloading
+    ui->progressBar->setValue(bytesReceived);
 }

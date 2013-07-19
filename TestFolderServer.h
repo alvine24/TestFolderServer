@@ -2,7 +2,7 @@
 #define TESTFOLDERSERVER_H
 
 #include <QWidget>
-#include "../../../../Desktop/Cairnsmith13/CairnSmith/CairnSmith/Server/ClientLib/sheer_cloud.h"
+#include "../../../../Desktop/CairnsmithNew/CairnSmith/CairnSmith/Server/ClientLib/sheer_cloud.h"
 #include <QEventLoop>
 #include <QMessageBox>
 #include <QDebug>

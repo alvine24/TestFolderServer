@@ -2,7 +2,7 @@
 #define TESTRENDERSERVER_H
 
 #include <QWidget>
-#include "../../../../Desktop/Cairnsmith13/CairnSmith/CairnSmith/Server/ClientLib/sheer_cloud.h"
+#include "sheer_cloud.h"
 #include <QDebug>
 #include <QByteArray>
 #include <QtTest/QTest>

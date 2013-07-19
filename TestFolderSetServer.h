@@ -2,7 +2,7 @@
 #define TESTFOLDERSETSERVER_H
 
 #include <QWidget>
-#include "../../../../Desktop/Cairnsmith13/CairnSmith/CairnSmith/Server/ClientLib/sheer_cloud.h"
+#include "sheer_cloud.h"
 #include <QEventLoop>
 #include <QMessageBox>
 #include <QDebug>
@@ -26,6 +26,8 @@ public slots:
     void activateButton();
     void uploadDone();
     void downloadDone();
+    void progressUploadBar(qint64 bytesSent, qint64 bytesTotal);
+    void progressDownloadBar(qint64 bytesReceived, qint64 bytesTotal);
     
 private:
     Ui::TestFolderSetServer *ui;
