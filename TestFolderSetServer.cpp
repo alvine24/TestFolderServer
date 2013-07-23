@@ -14,6 +14,7 @@ TestFolderSetServer::TestFolderSetServer(QWidget *parent) :
 
     connect(ui->uploadPushButton, SIGNAL(clicked()), SLOT(uploadFile()));
     connect(ui->downloadPushButton, SIGNAL(clicked()), SLOT(downloadFile()));
+    connect(ui->cancelPushButton, SIGNAL(clicked()), SLOT(cancelAction()));
 
     /*ui->fileLineEdit->setText("c:/data/file.txt");
     ui->lineEdit->setText("123");
@@ -42,6 +43,7 @@ void TestFolderSetServer::uploadFile(){
     }
     ui->uploadPushButton->setEnabled(false);
     ui->downloadPushButton->setEnabled(false);
+    ui->cancelPushButton->setEnabled(true);
 
     QFile *file = new QFile(ui->fileLineEdit->text());
     if(file->open(QIODevice::ReadOnly)){
@@ -62,17 +64,19 @@ void TestFolderSetServer::uploadFile(){
         msgBox.exec();
         ui->uploadPushButton->setEnabled(true);
         ui->downloadPushButton->setEnabled(true);
+        ui->cancelPushButton->setEnabled(false);
     }
 }
 
 void TestFolderSetServer::downloadFile(){
     if(link == NULL){
-        link = new SheerCloudLink(ui->hostLineEdit->text(), ui->userLineEdit->text(), ui->passwordLineEdit->text());//http://172.245.20.58:8080/
+        link = new SheerCloudLink(ui->hostLineEdit->text(), ui->userLineEdit->text(), ui->passwordLineEdit->text());//http://172.245.20.58:8080
     }
     ui->uploadPushButton->setEnabled(false);
     ui->downloadPushButton->setEnabled(false);
+    ui->cancelPushButton->setEnabled(true);
     link->Download(ui->fileLineEdit->text(), resultFile);
-    link->connect(link, SIGNAL(progressDownload(qint64, qint64)), this, SLOT(progressDownloadBar(qint64, qint64)));
+    link->connect(link, SIGNAL(progress(qint64,qint64)), this, SLOT(progressDownloadBar(qint64,qint64)));
     link->connect(link, SIGNAL(done()), this, SLOT(downloadDone()));
 }
 
@@ -85,6 +89,7 @@ void TestFolderSetServer::uploadDone(){
     ui->uploadPushButton->setEnabled(true);
     ui->downloadPushButton->setEnabled(true);
     ui->progressBar->setValue(0);
+    ui->cancelPushButton->setEnabled(false);
 }
 
 void TestFolderSetServer::downloadDone(){
@@ -97,17 +102,32 @@ void TestFolderSetServer::downloadDone(){
     if(!myFile.open(QIODevice::WriteOnly)){
         qDebug() << "Failed to open : " << myFile.fileName();
     }else {
-        qDebug() << "Data From Server"<< resultFile.size();
-        myFile.write(resultFile.data(), resultFile.size());
-        myFile.close();
-        QMessageBox msgBox;
-        msgBox.setText("The document is downloaded.");
-        msgBox.exec();
-        ui->downloadPushButton->setEnabled(true);
-        ui->uploadPushButton->setEnabled(true);
-        ui->progressBar->setValue(0);
-        qDebug() << "The file is downloaded : " << myFile.fileName();
+        //test on the size of the file
+        //if(resultFile.size() == totalByte){
+            qDebug() << "Data From Server"<< resultFile.size();
+            myFile.write(resultFile.data(), resultFile.size());
+            myFile.close();
+            QMessageBox msgBox;
+            msgBox.setText("The document is downloaded.");
+            msgBox.exec();
+            ui->downloadPushButton->setEnabled(true);
+            ui->uploadPushButton->setEnabled(true);
+            ui->progressBar->setValue(0);
+            ui->cancelPushButton->setEnabled(false);
+            qDebug() << "The file is downloaded : " << myFile.fileName();
+        //}
     }
+}
+
+void TestFolderSetServer::cancelAction(){
+    ui->uploadPushButton->setEnabled(true);
+    ui->downloadPushButton->setEnabled(true);
+    ui->cancelPushButton->setEnabled(false);
+    ui->progressBar->setValue(0);
+
+    link->disconnect();
+    link->deleteLater();
+    link = NULL;
 }
 
 void TestFolderSetServer::progressUploadBar(qint64 bytesSent, qint64 bytesTotal){
@@ -118,6 +138,7 @@ void TestFolderSetServer::progressUploadBar(qint64 bytesSent, qint64 bytesTotal)
 
 
 void TestFolderSetServer::progressDownloadBar(qint64 bytesReceived, qint64 bytesTotal){
+    qDebug() << "Bytes Total: " << bytesTotal;
     ui->progressBar->setMaximum(23467684);// here must be set the size of the file that is downloading
     ui->progressBar->setValue(bytesReceived);
 }

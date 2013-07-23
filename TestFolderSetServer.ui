@@ -208,6 +208,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="cancelPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QProgressBar" name="progressBar">
        <property name="value">
         <number>0</number>

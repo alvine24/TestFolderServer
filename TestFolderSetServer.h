@@ -26,6 +26,7 @@ public slots:
     void activateButton();
     void uploadDone();
     void downloadDone();
+    void cancelAction();
     void progressUploadBar(qint64 bytesSent, qint64 bytesTotal);
     void progressDownloadBar(qint64 bytesReceived, qint64 bytesTotal);
     

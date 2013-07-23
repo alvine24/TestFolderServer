@@ -71,7 +71,7 @@ void TestRenderServer::createListUpload(QString myFolder,QString path){
 
 void TestRenderServer::uploadFile(QString resPath, QByteArray data){
     if(link == NULL){
-        link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
+        link = new SheerCloudLink("http://kdl.me:8080", "abc", "123");//http://172.245.20.58:8080
         connect(link, SIGNAL(done()), this, SLOT(uploadDone()));
     }
 
@@ -82,6 +82,8 @@ void TestRenderServer::uploadFile(QString resPath, QByteArray data){
 
 void TestRenderServer::uploadDone(){
     if(fileList.isEmpty()){
+        link->deleteLater();
+        link = NULL;
         ui->uploadFolderPushButton->setEnabled(true);
         ui->renderPushButton->setEnabled(true);
     }else {
@@ -116,6 +118,8 @@ void TestRenderServer::renderDone(){
     }else{
         qDebug() << "It is done : "<< resultRender;
         qDebug() << "The result of Rendering :" << rendering;
+        link->deleteLater();
+        link = NULL;
         ui->uploadFolderPushButton->setEnabled(true);
         ui->renderPushButton->setEnabled(true);
     }
