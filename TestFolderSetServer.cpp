@@ -131,14 +131,12 @@ void TestFolderSetServer::cancelAction(){
 }
 
 void TestFolderSetServer::progressUploadBar(qint64 bytesSent, qint64 bytesTotal){
-    qDebug() << "Bytes Sent :" << bytesSent;
     ui->progressBar->setMaximum(bytesTotal);
     ui->progressBar->setValue(bytesSent);
 }
 
 
 void TestFolderSetServer::progressDownloadBar(qint64 bytesReceived, qint64 bytesTotal){
-    qDebug() << "Bytes Total: " << bytesTotal;
-    ui->progressBar->setMaximum(23467684);// here must be set the size of the file that is downloading
+    ui->progressBar->setMaximum(bytesTotal);// here must be set the size of the file that is downloading
     ui->progressBar->setValue(bytesReceived);
 }
