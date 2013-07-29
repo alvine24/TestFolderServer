@@ -34,7 +34,7 @@ void TestListFolderServer::clickMaterial(){
     if(link == NULL){
         QString user = "abc";
         QString pass = "123";
-        link = new SheerCloudLink("http://localhost:8080", user, pass);//http://172.245.20.58:8080
+        link = new SheerCloudLink("http://172.245.20.58:8080", user, pass);//http://172.245.20.58:8080
     }
 
     spathResList.clear();
@@ -75,7 +75,7 @@ void TestListFolderServer::listDownload(){
 void TestListFolderServer::getListFileServer(QString spath){
     qDebug() << "TestListFolderServer::getListFileServer";
     if(link == NULL){
-        link = new SheerCloudLink("http://localhost:8080", "abc", "123");//http://172.245.20.58:8080
+        link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
     }
 
     //QByteArray res;
@@ -96,7 +96,7 @@ void TestListFolderServer::materialDone(){
     ui->treeView->setRootIndex(dirRootIndex);
 
     fileModel = new QFileSystemModel(this);
-    fileModel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
+    fileModel->setFilter(QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs);
     fileRootIndex = fileModel->setRootPath(sPathServer);
 
     ui->listView->setModel(fileModel);
@@ -134,7 +134,7 @@ void TestListFolderServer::downloadDone(){
 
 void TestListFolderServer::clickModel(){
     if(link == NULL){
-        link = new SheerCloudLink("http://localhost:8080", "abc", "123");//http://172.245.20.58:8080
+        link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
     }
     resultList.clear();
     spathResList.clear();
@@ -156,7 +156,7 @@ void TestListFolderServer::modelDone(){
     ui->treeView->setRootIndex(dirRootIndex);
 
     fileModel = new QFileSystemModel(this);
-    fileModel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
+    fileModel->setFilter(QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs);
     fileRootIndex = fileModel->setRootPath(sPathServer);
 
     ui->listView->setModel(fileModel);

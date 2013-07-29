@@ -137,6 +137,6 @@ void TestFolderSetServer::progressUploadBar(qint64 bytesSent, qint64 bytesTotal)
 
 
 void TestFolderSetServer::progressDownloadBar(qint64 bytesReceived, qint64 bytesTotal){
-    ui->progressBar->setMaximum(bytesTotal);// here must be set the size of the file that is downloading
+    ui->progressBar->setMaximum(bytesTotal);
     ui->progressBar->setValue(bytesReceived);
 }
