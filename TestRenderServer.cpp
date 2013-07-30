@@ -15,6 +15,7 @@ TestRenderServer::TestRenderServer(QWidget *parent) :
     connect(ui->sceneLineEdit, SIGNAL(textChanged(QString)), SLOT(activateRenderButton()));
 
     connect(ui->uploadFolderPushButton, SIGNAL(clicked()), SLOT(uploadFolder()));
+    connect(ui->deletePushButton, SIGNAL(clicked()), SLOT(deleteFolder()));
     connect(ui->renderPushButton, SIGNAL(clicked()), SLOT(askRender()));
 
     link = NULL;
@@ -33,6 +34,7 @@ void TestRenderServer::activateUploadButton(){
     bool ok = (!ui->hostLineEdit->text().isEmpty()) && (!ui->nameFolderLineEdit->text().isEmpty())
             && (!ui->userNameLineEdit->text().isEmpty()) && (!ui->passwordLineEdit->text().isEmpty());
     ui->uploadFolderPushButton->setEnabled(ok);
+    ui->deletePushButton->setEnabled(ok);
 }
 
 void TestRenderServer::activateRenderButton(){
@@ -45,9 +47,10 @@ void TestRenderServer::uploadFolder(){
 
     ui->uploadFolderPushButton->setEnabled(false);
     ui->renderPushButton->setEnabled(false);
+    ui->deletePushButton->setEnabled(false);
 
     QString myFolder = ui->nameFolderLineEdit->text();
-    QString myServerFolder = ui->nameFolderLineEdit->text();
+    //QString myServerFolder = ui->nameFolderLineEdit->text();
     createListUpload(myFolder,serverPath);
     fileList = myHash.keys();
     if(!fileList.isEmpty()){
@@ -141,3 +144,31 @@ void TestRenderServer::renderDone(){
         renderDone();
     }
 }*/
+
+void TestRenderServer::deleteFolder(){
+    if(link == NULL){
+        link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");
+    }
+
+    ui->uploadFolderPushButton->setEnabled(false);
+    ui->renderPushButton->setEnabled(false);
+    ui->deletePushButton->setEnabled(false);
+
+    QString myFileToDelete = ui->nameFolderLineEdit->text();
+    if(!myFileToDelete.isEmpty()){
+        //delete from the server
+        link->Delete(myFileToDelete);
+        link->connect(link, SIGNAL(done()), this, SLOT(deleteDone()));
+    }
+}
+
+void TestRenderServer::deleteDone(){
+    link->deleteLater();
+    link = NULL;
+    ui->uploadFolderPushButton->setEnabled(true);
+    ui->renderPushButton->setEnabled(true);
+    ui->deletePushButton->setEnabled(true);
+    QMessageBox msgBox;
+    msgBox.setText("The file is deleted.");
+    msgBox.exec();
+}

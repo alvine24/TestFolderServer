@@ -9,6 +9,7 @@
 #include "FileHash.h"
 #include <QFile>
 #include <QDir>
+#include <QMessageBox>
 
 
 namespace Ui {
@@ -27,8 +28,10 @@ public slots:
     void activateUploadButton();
     void activateRenderButton();
     void uploadFolder();
+    void deleteFolder();
     void askRender();
     void uploadDone();
+    void deleteDone();
     void renderDone();
     //void progressDone();
 

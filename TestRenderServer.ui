@@ -107,19 +107,22 @@
       <number>5</number>
      </property>
      <item>
-      <widget class="QLineEdit" name="serverFolderLineEdit">
-       <property name="text">
-        <string>Fill the server path destination</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="uploadFolderPushButton">
        <property name="enabled">
         <bool>false</bool>
        </property>
        <property name="text">
         <string>Upload Folder</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deletePushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Delete Folder</string>
        </property>
       </widget>
      </item>

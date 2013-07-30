@@ -32,14 +32,13 @@ void TestListFolderServer::on_treeView_clicked(const QModelIndex &index){
 
 void TestListFolderServer::clickMaterial(){
     if(link == NULL){
-        QString user = "abc";
-        QString pass = "123";
-        link = new SheerCloudLink("http://172.245.20.58:8080", user, pass);//http://172.245.20.58:8080
+        link = new SheerCloudLink("http://172.245.20.58:8080", "abc", "123");//http://172.245.20.58:8080
     }
 
     spathResList.clear();
     resultList.clear();
-    spathResList = "CSLibrairies/"+ui->materialsPushButton->text();
+    spathResList = "CSLibrairies/"+ui->materialsPushButton->text()+"/Color";
+    qDebug() << "Folder :" << spathResList;
     link->List(spathResList, resultList);
 
     link->connect(link, SIGNAL(done()), this, SLOT(listDownload()));
@@ -57,12 +56,14 @@ void TestListFolderServer::listDownload(){
 
     list.clear();
     QString myResult = resultList.data();
+    qDebug()<< "The List: " << myResult;
     QStringList myListResult = myResult.split("\n");
     foreach(QString s, myListResult){
         if(s.contains('/')){
             list.append(s);
         }
     }
+    qDebug()<< "The List: " << list;
     //get file from the first
     if (!list.empty()) {
         QString s = list.at(0);
@@ -138,7 +139,7 @@ void TestListFolderServer::clickModel(){
     }
     resultList.clear();
     spathResList.clear();
-    spathResList = "CSLibrairies/"+ui->modelsPushButton->text();
+    spathResList = ui->modelsPushButton->text();
 
     link->List(spathResList, resultList);
 
